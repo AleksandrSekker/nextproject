@@ -1,0 +1,72 @@
+@import '../../../scss/variables';
+
+.footer {
+  max-width: 1200px;
+  margin: auto;
+  padding-left: 1rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+.cont1 {
+  display: flex;
+}
+.input__field {
+  padding: 0.8rem;
+  width: 15rem;
+  border: $input-fild-border;
+  border-radius: 0.4rem;
+  margin-right: 1rem;
+}
+.input__field:focus {
+  border: $input-fild-border-hover;
+}
+.input__btn {
+  width: 6rem;
+  background: $input-button-background;
+  border-radius: 0.4rem;
+  border: none;
+  color: $input-button-text;
+  font-size: 1.1rem;
+  transition: all 1s;
+  cursor: pointer;
+  &:hover {
+    background: $input-button-background-hover;
+    margin-left: 1rem;
+  }
+}
+
+.cont2 div a {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  font-size: 2rem;
+  color: $icons-color;
+}
+
+.icons {
+  transition-duration: 1s;
+  transition-property: transform;
+  &:hover {
+    transform: rotate(360deg);
+    color: $icons-color-hover;
+  }
+}
+
+.created__by {
+  background: $created-by-background;
+  padding: 1rem;
+}
+.created__by__child {
+  max-width: 1200px;
+  padding-left: 1rem;
+  margin: auto;
+  color: $created-by-color;
+  display: flex;
+  justify-content: center;
+}
+@media only screen and (max-width: 600px) {
+  .input__field {
+    display: none;
+  }
+}

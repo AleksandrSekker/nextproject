@@ -1,0 +1,25 @@
+@import '../../../scss/variables';
+.sign__in {
+  color: white;
+  background: rgb(182, 71, 67);
+  max-width: 400px;
+  margin: 0 auto;
+  border-radius: 0.4rem;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  outline: none;
+  padding: 1rem 2rem;
+}
+.sign__out {
+  color: white;
+  background: rgb(36, 100, 143);
+  max-width: 400px;
+  margin: 0 auto;
+  border-radius: 0.4rem;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  outline: none;
+  padding: 1rem 2rem;
+}
