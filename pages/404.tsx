@@ -5,16 +5,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGhost } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
 const PageNotFound = () => {
-  // const router = useRouter();
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     router.push('/');
-  //   }, 3000);
-  // }, []);
+  const router = useRouter();
+  useEffect(() => {
+    setTimeout(() => {
+      router.push('/');
+    }, 3000);
+  }, []);
   return (
     <Layout title="Page is not found">
       <div className={styles.page__container}>
-        <main>
+        <div className={styles.main}>
           <h1 className={styles.h1}>
             4
             <span>
@@ -26,7 +26,7 @@ const PageNotFound = () => {
           <p className={styles.p}>
             Sorry, the page you're looking for cannot be accessed
           </p>
-        </main>
+        </div>
       </div>
     </Layout>
   );
