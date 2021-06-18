@@ -1,28 +1,44 @@
 import { useEffect, useState } from 'react';
 import Container from '../components/Container/Container';
-import Form from '../components/FormForPost/Form';
 import Loader from '../components/Loader/Loader';
 import Post from '../components/Post/Post';
 import { firestore } from '../firebase';
 import Layout from '../layout/Layout';
-import styles from '../scss/feed.module.scss';
+
+import { useSelector } from 'react-redux';
+
+import { selectChange } from '../redux/formchange/action';
+import Modal from '../components/modal/Modal';
+import Button from '../components/buttons/Button';
+
 const IndexPage = () => {
   const [data, setData] = useState<any>([]);
   const [loaded, setLoaded] = useState<boolean>();
   const [isError, setIsError] = useState<boolean>();
-  const [isChange, setIsChange] = useState(true);
+  const [isModal, setIsModal] = useState(false);
 
+  const isChange = useSelector(selectChange);
   const fetchData = async () => {
     try {
       const dataFromFirebase = await firestore.collection('biography').get();
       setData(
-        dataFromFirebase.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        dataFromFirebase.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+          showComments: true,
+        }))
       );
       setLoaded(true);
     } catch (error) {
+      setData([]);
       setIsError(true);
+      console.log(error);
     }
   };
+  const modalHandler = () => {
+    setIsModal(!isModal);
+  };
+
   useEffect(() => {
     fetchData();
     return () => setLoaded(false);
@@ -31,17 +47,22 @@ const IndexPage = () => {
   return (
     <Layout title="Home">
       <Container>
-        <div>
-          {isError && <div>Error</div>}
-          {!loaded ? (
-            <Loader />
-          ) : (
-            <div className={styles.center}>
-              <Form isChange={isChange} setIsChange={setIsChange} />
-              <Post data={data} isChange={isChange} setIsChange={setIsChange} />
-            </div>
-          )}
-        </div>
+        {isError && <div>Error</div>}
+        {!loaded ? (
+          <Loader />
+        ) : (
+          <div>
+            <Container>
+              <Button
+                color="blue"
+                children="Modal"
+                modalHandler={modalHandler}
+              />
+            </Container>
+            {isModal && <Modal setIsModal={setIsModal} />}
+            <Post data={data} />
+          </div>
+        )}
       </Container>
     </Layout>
   );

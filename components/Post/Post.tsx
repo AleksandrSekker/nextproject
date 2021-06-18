@@ -1,17 +1,22 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  SyntheticEvent,
-  useState,
-} from 'react';
+import {
+  faBackspace,
+  faComment,
+  faHeart,
+} from '@fortawesome/free-solid-svg-icons';
+import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { SyntheticEvent, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, firestore, timestamp } from '../../firebase';
 import Comments from './Comments';
 import styles from './scss/post.module.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import { changevalue, selectChange } from '../../redux/formchange/action';
+import SubmitButton from '../submit/SubmitButton';
+import InputField from '../inputField/InputField';
+// import { motion } from 'framer-motion';
 interface Props {
   data: any;
-  isChange: boolean;
-  setIsChange: Dispatch<SetStateAction<boolean>>;
 }
 interface Data {
   id: string;
@@ -23,52 +28,76 @@ interface Data {
   comments: {
     text: string;
     username: string;
+    avatar: string;
   };
 }
 
-const Post = ({ data, isChange, setIsChange }: Props) => {
+const Post = ({ data }: Props) => {
   const [comment, setComment] = useState('');
+  const isChange = useSelector(selectChange);
+  const dispatch = useDispatch();
   const [user] = useAuthState(auth);
   const deleteHandler = (id: string) => {
-    setIsChange(!isChange);
     firestore.collection('biography').doc(id).delete();
+    dispatch(changevalue());
   };
   const postComment = (event: SyntheticEvent, postId: string) => {
     event.preventDefault();
     firestore.collection('biography').doc(postId).collection('comments').add({
       text: comment,
       username: user?.displayName,
+      avatar: user?.photoURL,
       timestamp: timestamp,
     });
     setComment('');
-    setIsChange(!isChange);
+    dispatch(changevalue());
   };
-
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setComment(e.target.value);
+  const showCommentsToggler = (id: string) => {
+    console.log(data.id);
+  };
   return (
     <div className={styles.post__container}>
       {data.map(({ id, image, title, name, avatar, userid }: Data) => (
-        <div key={id}>
+        <div key={id} className={styles.post}>
           <div className={styles.post__header}>
             <div className={styles.post__owner}>
               <img src={avatar} alt="avatar" className={styles.avatar} />
               <p>{name}</p>
             </div>
             {user?.uid === userid && (
-              <button onClick={() => deleteHandler(id)}>Delete</button>
+              <button className={styles.button__delete}>
+                <FontAwesomeIcon
+                  icon={faBackspace}
+                  className={styles.icon__delete}
+                  onClick={() => deleteHandler(id)}
+                />
+              </button>
             )}
           </div>
           <img src={image} alt="post image" className={styles.image} />
-          <p>{title}</p>
-          <form onSubmit={(event) => postComment(event, id)}>
-            <input
-              type="text"
-              placeholder="Write some comment"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
+          <div className={styles.body__container}>
+            <p>{title}</p>
+            <FontAwesomeIcon icon={faHeart} className={styles.fill__like} />
+            <FontAwesomeIcon icon={farHeart} className={styles.empty__like} />
+            <FontAwesomeIcon
+              icon={faComment}
+              className={styles.comment__icon}
+              onClick={() => showCommentsToggler(id)}
             />
-            <button type="submit">Add comment</button>
-          </form>
-          <Comments id={id} isChange={isChange} />
+            <p>Amount likes</p>
+            <form onSubmit={(event) => postComment(event, id)}>
+              <InputField
+                placeholder="Write some comment"
+                onChangeHandler={onChangeHandler}
+                size="small"
+              />
+              <SubmitButton color="blue">Add Button</SubmitButton>
+            </form>
+
+            {/* {showComments && <Comments id={id} isChange={isChange} />} */}
+          </div>
         </div>
       ))}
     </div>

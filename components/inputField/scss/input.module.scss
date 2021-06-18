@@ -1,0 +1,22 @@
+.input__field {
+  border: none;
+  border-bottom: 2px solid rgb(133, 133, 133);
+  outline: none;
+  margin-bottom: 0.5rem;
+  &:focus {
+    border-bottom: 2px solid rgb(62, 121, 189);
+  }
+}
+.large {
+  width: 60vw;
+  height: 2rem;
+  font-size: 1.5rem;
+  background: transparent;
+  color: #fff;
+  &::placeholder {
+    color: rgb(218, 214, 214);
+  }
+}
+.small {
+  width: 95%;
+}
