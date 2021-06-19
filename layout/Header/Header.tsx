@@ -32,7 +32,15 @@ const Header = () => {
             </Link>
           </div>
 
-          <div>{user ? <SignOutButton /> : <SignInButton />}</div>
+          <div>
+            {user ? (
+              <SignOutButton />
+            ) : (
+              <>
+                <SignInButton />
+              </>
+            )}
+          </div>
 
           {/* <div className={styles.navigation__content}>
             <Link href="/pomodoro">Pomodoro App</Link>

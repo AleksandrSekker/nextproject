@@ -9,8 +9,12 @@ const SignInButton = () => {
     auth.signInWithPopup(provider);
   };
   return (
-    <button type="button" className={styles.sign__in} onClick={signInWithGoogle}>
-      Sign in with Google
+    <button
+      type="button"
+      className={styles.sign__in}
+      onClick={signInWithGoogle}
+    >
+      Sign in
     </button>
   );
 };

@@ -1,24 +1,21 @@
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useDispatch } from 'react-redux';
-import { auth, firestore, storage } from '../../firebase';
+import { auth, firestore } from '../../firebase';
+import useFileChange from '../../hooks/useFileChange';
 import { changevalue } from '../../redux/formchange/action';
 import UploadFile from '../fileUpload/UploadFile';
 import InputField from '../inputField/InputField';
 import SubmitButton from '../submit/SubmitButton';
 
-const Form = () => {
+interface Props {
+  setIsModal?: any;
+}
+const Form = ({ setIsModal }: Props) => {
   const [title, setTitle] = useState(String);
-  const [fileUrl, setFileUrl] = useState(null);
   const [user] = useAuthState(auth);
   const dispatch = useDispatch();
-  const onFileChange = async (e: any) => {
-    const file = e.target.files[0];
-    const storageRef = storage.ref();
-    const fileRef = storageRef.child(file.name);
-    await fileRef.put(file);
-    setFileUrl(await fileRef.getDownloadURL());
-  };
+  const { fileUrl, onFileChange } = useFileChange();
   const onSubmitHandler = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     await firestore.collection('biography').add({
@@ -28,7 +25,7 @@ const Form = () => {
       avatar: user?.photoURL,
       userid: user?.uid,
     });
-
+    setIsModal(false);
     dispatch(changevalue());
   };
   console.log(fileUrl);
@@ -44,7 +41,6 @@ const Form = () => {
           onChangeHandler={onChangeHandler}
           size="large"
         />
-        {/* {<Loader />} */}
         <SubmitButton color="blue" disabledButton={!fileUrl}>
           Submit
         </SubmitButton>

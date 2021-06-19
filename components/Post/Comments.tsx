@@ -41,9 +41,9 @@ const Comments = ({ id, isChange }: Props) => {
         <div key={id}>
           <div className={styles.flex}>
             <img src={avatar} alt="avatar" className={styles.avatar} />
-            <strong>{username}</strong>
+            <p className={styles.username}>{username}</p>
           </div>
-          <p>{text}</p>
+          <p className={styles.text}>{text}</p>
         </div>
       ))}
     </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Container from '../components/Container/Container';
 import Loader from '../components/Loader/Loader';
 import Post from '../components/Post/Post';
-import { firestore } from '../firebase';
+import { auth, firestore } from '../firebase';
 import Layout from '../layout/Layout';
 
 import { useSelector } from 'react-redux';
@@ -10,6 +10,8 @@ import { useSelector } from 'react-redux';
 import { selectChange } from '../redux/formchange/action';
 import Modal from '../components/modal/Modal';
 import Button from '../components/buttons/Button';
+import Link from 'next/link';
+import Form from '../components/FormForPost/Form';
 
 const IndexPage = () => {
   const [data, setData] = useState<any>([]);
@@ -18,6 +20,7 @@ const IndexPage = () => {
   const [isModal, setIsModal] = useState(false);
 
   const isChange = useSelector(selectChange);
+
   const fetchData = async () => {
     try {
       const dataFromFirebase = await firestore.collection('biography').get();
@@ -53,13 +56,20 @@ const IndexPage = () => {
         ) : (
           <div>
             <Container>
-              <Button
-                color="blue"
-                children="Modal"
-                modalHandler={modalHandler}
-              />
+              <Link href={`user/${auth.currentUser?.uid}`}>
+                <div>
+                  <Button color="purple" children="My page" />
+                </div>
+              </Link>
+
+              <Button color="blue" children="Modal" handler={modalHandler} />
             </Container>
-            {isModal && <Modal setIsModal={setIsModal} />}
+            {isModal && (
+              <Modal
+                setIsModal={setIsModal}
+                children={<Form setIsModal={setIsModal} />}
+              />
+            )}
             <Post data={data} />
           </div>
         )}

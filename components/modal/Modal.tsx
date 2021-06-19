@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
 import React, { Dispatch, SetStateAction } from 'react';
-import Form from '../FormForPost/Form';
 import styles from './scss/modal.module.scss';
 interface Props {
   setIsModal: Dispatch<SetStateAction<boolean>>;
+  children: React.ReactNode;
 }
-const Modal = ({ setIsModal }: Props) => {
+const Modal = ({ setIsModal, children }: Props) => {
   const handleClick = (e: any) => {
     if (e.target.classList.contains('backdrop')) {
       setIsModal(false);
@@ -24,7 +24,7 @@ const Modal = ({ setIsModal }: Props) => {
         animate={{ y: 0 }}
         className={styles.content}
       >
-        <Form />
+        {children}
       </motion.div>
     </motion.div>
   );

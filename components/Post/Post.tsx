@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changevalue, selectChange } from '../../redux/formchange/action';
 import SubmitButton from '../submit/SubmitButton';
 import InputField from '../inputField/InputField';
+import Link from 'next/link';
 // import { motion } from 'framer-motion';
 interface Props {
   data: any;
@@ -52,20 +53,21 @@ const Post = ({ data }: Props) => {
     setComment('');
     dispatch(changevalue());
   };
-  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) =>
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
-  const showCommentsToggler = (id: string) => {
-    console.log(data.id);
   };
+
   return (
     <div className={styles.post__container}>
       {data.map(({ id, image, title, name, avatar, userid }: Data) => (
         <div key={id} className={styles.post}>
           <div className={styles.post__header}>
-            <div className={styles.post__owner}>
-              <img src={avatar} alt="avatar" className={styles.avatar} />
-              <p>{name}</p>
-            </div>
+            <Link href={`user/${userid}`}>
+              <div className={styles.post__owner}>
+                <img src={avatar} alt="avatar" className={styles.avatar} />
+                <p>{name}</p>
+              </div>
+            </Link>
             {user?.uid === userid && (
               <button className={styles.button__delete}>
                 <FontAwesomeIcon
@@ -84,7 +86,6 @@ const Post = ({ data }: Props) => {
             <FontAwesomeIcon
               icon={faComment}
               className={styles.comment__icon}
-              onClick={() => showCommentsToggler(id)}
             />
             <p>Amount likes</p>
             <form onSubmit={(event) => postComment(event, id)}>
@@ -96,7 +97,7 @@ const Post = ({ data }: Props) => {
               <SubmitButton color="blue">Add Button</SubmitButton>
             </form>
 
-            {/* {showComments && <Comments id={id} isChange={isChange} />} */}
+            <Comments id={id} isChange={isChange} />
           </div>
         </div>
       ))}

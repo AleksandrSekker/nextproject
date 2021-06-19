@@ -3,14 +3,14 @@ import styles from './scss/button.module.scss';
 interface Props {
   color: string;
   children: string;
-  modalHandler: () => void;
+  handler?: () => void;
 }
 
-const Button = ({ color, children, modalHandler }: Props) => {
+const Button = ({ color, children, handler }: Props) => {
   return (
     <button
       type="button"
-      onClick={modalHandler}
+      onClick={handler}
       className={`${styles[color]} ${styles.button}`}
     >
       {children}
