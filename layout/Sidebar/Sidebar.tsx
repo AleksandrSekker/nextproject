@@ -10,7 +10,6 @@ import React, { useState } from 'react';
 
 import { auth } from '../../firebase';
 import styles from './scss/sidebar.module.scss';
-interface Props {}
 
 const Sidebar = () => {
   const [navFalse, setNavFalse] = useState<boolean>(false);
