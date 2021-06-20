@@ -7,17 +7,18 @@ import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { SyntheticEvent, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth, firestore, timestamp } from '../../firebase';
+import { auth, firestore, timestamp } from '../../../firebase';
 import Comments from './Comments';
 import styles from './scss/post.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import { changevalue, selectChange } from '../../redux/formchange/action';
-import SubmitButton from '../submit/SubmitButton';
-import InputField from '../inputField/InputField';
+import { changevalue, selectChange } from '../../../redux/formchange/action';
+import SubmitButton from '../../submit/SubmitButton';
+import InputField from '../../inputField/InputField';
 import Link from 'next/link';
 // import { motion } from 'framer-motion';
 interface Props {
   data: any;
+  userid: string | string[];
 }
 interface Data {
   id: string;
@@ -33,23 +34,34 @@ interface Data {
   };
 }
 
-const Post = ({ data }: Props) => {
+const Post = ({ data, userid }: Props) => {
   const [comment, setComment] = useState('');
   const isChange = useSelector(selectChange);
   const dispatch = useDispatch();
   const [user] = useAuthState(auth);
   const deleteHandler = (id: string) => {
-    firestore.collection('biography').doc(id).delete();
+    firestore
+      .collection('users')
+      .doc(userid as string)
+      .collection('posts')
+      .doc(id)
+      .delete();
     dispatch(changevalue());
   };
   const postComment = (event: SyntheticEvent, postId: string) => {
     event.preventDefault();
-    firestore.collection('biography').doc(postId).collection('comments').add({
-      text: comment,
-      username: user?.displayName,
-      avatar: user?.photoURL,
-      timestamp: timestamp,
-    });
+    firestore
+      .collection('users')
+      .doc(userid as string)
+      .collection('posts')
+      .doc(postId)
+      .collection('comments')
+      .add({
+        text: comment,
+        username: user?.displayName,
+        avatar: user?.photoURL,
+        timestamp: timestamp,
+      });
     setComment('');
     dispatch(changevalue());
   };
@@ -62,7 +74,7 @@ const Post = ({ data }: Props) => {
       {data.map(({ id, image, title, name, avatar, userid }: Data) => (
         <div key={id} className={styles.post}>
           <div className={styles.post__header}>
-            <Link href={`user/${userid}`}>
+            <Link href={`${userid}`}>
               <div className={styles.post__owner}>
                 <img src={avatar} alt="avatar" className={styles.avatar} />
                 <p>{name}</p>

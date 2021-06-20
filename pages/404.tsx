@@ -12,7 +12,7 @@ const PageNotFound = () => {
     }, 3000);
   }, []);
   return (
-    <Layout title="Page is not found">
+    <Layout title="Page is not found | 404">
       <div className={styles.page__container}>
         <div className={styles.main}>
           <h1 className={styles.h1}>

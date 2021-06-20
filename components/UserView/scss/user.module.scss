@@ -1,14 +1,16 @@
 .flex {
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
   margin-top: 2rem;
 }
 .header__profile {
   display: flex;
+  flex-wrap: wrap;
 }
 .avatar {
-  width: 400px;
-  height: 400px;
+  width: 20rem;
+  height: 20rem;
   border-radius: 100%;
 }
 .paragraph {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useDispatch } from 'react-redux';
 import { auth, firestore } from '../../firebase';
@@ -9,22 +9,47 @@ import InputField from '../inputField/InputField';
 import SubmitButton from '../submit/SubmitButton';
 
 interface Props {
-  setIsModal?: any;
+  setIsModal: React.Dispatch<React.SetStateAction<boolean>>;
+  userid: string | string[];
 }
-const Form = ({ setIsModal }: Props) => {
+const Form = ({ setIsModal, userid }: Props) => {
   const [title, setTitle] = useState(String);
+  const [users, setUsers] = useState<any>([]);
   const [user] = useAuthState(auth);
-  const dispatch = useDispatch();
+
   const { fileUrl, onFileChange } = useFileChange();
+
+  const dispatch = useDispatch();
+  const fetchData = async () => {
+    try {
+      const dataFromFirebase = await firestore
+        .collection('users')
+        .doc(userid as string)
+        .get();
+
+      setUsers(dataFromFirebase.data());
+    } catch (error) {
+      setUsers([]);
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, [userid]);
+  console.log(users);
   const onSubmitHandler = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    await firestore.collection('biography').add({
-      title,
-      image: fileUrl,
-      name: user?.displayName,
-      avatar: user?.photoURL,
-      userid: user?.uid,
-    });
+    await firestore
+      .collection('users')
+      .doc(userid as string)
+      .collection('posts')
+      .add({
+        title,
+        image: fileUrl,
+        name: users.name,
+        avatar: users.avatar,
+        userid: user?.uid,
+      });
     setIsModal(false);
     dispatch(changevalue());
   };

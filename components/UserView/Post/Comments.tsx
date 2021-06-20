@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { firestore } from '../../firebase';
+import { firestore } from '../../../firebase';
 import styles from './scss/comments.module.scss';
 
 interface Props {

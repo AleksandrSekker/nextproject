@@ -1,24 +1,27 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import Button from '../../components/buttons/Button';
+import { useDispatch, useSelector } from 'react-redux';
 import Container from '../../components/Container/Container';
-import CreateAccount from '../../components/CreateAccount/CreateAccount';
 import Loader from '../../components/Loader/Loader';
-import Modal from '../../components/modal/Modal';
+import UserView from '../../components/UserView/UserView';
 import { auth, firestore } from '../../firebase';
 import Layout from '../../layout/Layout';
-import { selectChange } from '../../redux/formchange/action';
-import styles from './scss/user.module.scss';
+import { changevalue, selectChange } from '../../redux/formchange/action';
+
 const User = () => {
   const [data, setData] = useState<any>([]);
   const [loaded, setLoaded] = useState<boolean>();
   const [isError, setIsError] = useState<boolean>();
   const [isModal, setIsModal] = useState(false);
   const [subscribe, setSubscribe] = useState<any>([]);
+  const [currUserSub, setcurrUserSub] = useState<any>();
+  const [isModalPost, setIsModalPost] = useState(false);
+  const [isModalSubscribers, setIsModalSubscribers] = useState(false);
+  const [posts, setPosts] = useState<any>([]);
   const isChange = useSelector(selectChange);
   const router = useRouter();
   const { userid } = router.query;
+  const dispatch = useDispatch();
   const fetchData = async () => {
     try {
       const dataFromFirebase = await firestore
@@ -27,22 +30,52 @@ const User = () => {
         .get();
 
       setData(dataFromFirebase.data());
+      const subscribeFromFirebase = await firestore
+        .collection('users')
+        .doc(userid as string)
+        .collection('subscribers')
+        .get();
+      setSubscribe(
+        subscribeFromFirebase.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }))
+      );
 
+      const isCurrentUserSubscribed = await firestore
+        .collection('users')
+        .doc(userid as string)
+        .collection('subscribers')
+        .doc(auth.currentUser?.uid)
+        .get();
+      setcurrUserSub(isCurrentUserSubscribed.data());
+
+      const postUser = await firestore
+        .collection('users')
+        .doc(userid as string)
+        .collection('posts')
+        .get();
+      setPosts(postUser.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       setLoaded(true);
     } catch (error) {
       setData([]);
+      setSubscribe([]);
+      setcurrUserSub(null);
       setIsError(true);
       console.log(error);
     }
   };
-  console.log(data);
-  useEffect(() => {
-    fetchData();
-    return () => setLoaded(false);
-  }, [isChange]);
+
   const modalHandler = () => {
     setIsModal(!isModal);
   };
+  const modalPostHandler = () => {
+    setIsModalPost(!isModalPost);
+  };
+  const modalSubscribersHandler = () => {
+    setIsModalSubscribers(!isModalSubscribers);
+  };
+
   const subscribeHandler = async () => {
     try {
       await firestore
@@ -52,17 +85,10 @@ const User = () => {
         .doc(auth.currentUser?.uid)
         .set({
           avatar: auth.currentUser?.photoURL,
+          id: auth.currentUser?.uid,
         });
-      const dataFromFirebase = await firestore
-        .collection('users')
-        .doc(userid as string)
-        .collection('subscribers')
-        .doc(auth.currentUser?.uid as string)
-        .get();
-      if (dataFromFirebase) {
-        setSubscribe(dataFromFirebase.data());
-      }
       setLoaded(true);
+      dispatch(changevalue());
     } catch (error) {
       setSubscribe([]);
       setIsError(true);
@@ -80,6 +106,7 @@ const User = () => {
         .delete();
 
       setLoaded(true);
+      dispatch(changevalue());
     } catch (error) {
       setSubscribe([]);
       setIsError(true);
@@ -87,11 +114,10 @@ const User = () => {
     }
   };
   useEffect(() => {
-    subscribeHandler();
-    unSubscribeHandler();
+    fetchData();
     return () => setLoaded(false);
-  }, [isChange]);
-  console.log(subscribe);
+  }, [isChange, userid]);
+  console.log(data);
   return (
     <Layout title={`${data?.name || 'user page'} `}>
       <Container>
@@ -99,70 +125,25 @@ const User = () => {
         {!loaded ? (
           <Loader />
         ) : (
-          <div>
-            {data ? (
-              <>
-                <div className={styles.flex}>
-                  <img src={data.avatar} alt="" className={styles.avatar} />
-                  <div>
-                    <p className={`${styles.paragraph} ${styles.name}`}>
-                      {data.name}
-                    </p>
-                    <div className={styles.header__profile}>
-                      {auth.currentUser?.uid === userid ? (
-                        <Button
-                          color="blue"
-                          children="Update Profile"
-                          handler={modalHandler}
-                        />
-                      ) : (
-                        <>
-                          <Button
-                            color="purple"
-                            children="Subscribe"
-                            handler={subscribeHandler}
-                          />
-
-                          <Button
-                            color="grey"
-                            children="Unsubscribe"
-                            handler={unSubscribeHandler}
-                          />
-                        </>
-                      )}
-
-                      {isModal && (
-                        <Modal
-                          setIsModal={setIsModal}
-                          children={<CreateAccount setIsModal={setIsModal} />}
-                        />
-                      )}
-                    </div>
-                    {/* <p>{subscribe.length} Subscribers</p> */}
-                    <p className={styles.paragraph}>{data.age}</p>
-                    <p className={styles.paragraph}>{data.birthday}</p>
-                    <p className={styles.paragraph}>{data.gender}</p>
-                    <p className={styles.paragraph}>{data.phone}</p>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <p>Please create profile</p>
-                <Button
-                  color="blue"
-                  children="Create Profile"
-                  handler={modalHandler}
-                />
-                {isModal && (
-                  <Modal
-                    setIsModal={setIsModal}
-                    children={<CreateAccount setIsModal={setIsModal} />}
-                  />
-                )}
-              </>
-            )}
-          </div>
+          <UserView
+            data={data}
+            auth={auth}
+            userid={userid}
+            modalHandler={modalHandler}
+            modalPostHandler={modalPostHandler}
+            currUserSub={currUserSub}
+            unSubscribeHandler={unSubscribeHandler}
+            subscribeHandler={subscribeHandler}
+            isModal={isModal}
+            setIsModal={setIsModal}
+            isModalPost={isModalPost}
+            setIsModalPost={setIsModalPost}
+            subscribe={subscribe}
+            posts={posts}
+            isModalSubscribers={isModalSubscribers}
+            modalSubscribersHandler={modalSubscribersHandler}
+            setIsModalSubscribers={setIsModalSubscribers}
+          />
         )}
       </Container>
     </Layout>
