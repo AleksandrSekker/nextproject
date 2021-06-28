@@ -1,18 +1,18 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import Container from '../../../components/Container/Container';
-import FriendView from '../../../components/FriendView/FriendView';
-import Loader from '../../../components/Loader/Loader';
+import { useDispatch } from 'react-redux';
+import Container from '../../../components/Layout/Container/Container';
+import ErrorLoadContainer from '../../../components/Layout/ErrorLoadContainer/ErrorLoadContainer';
+import FriendView from '../../../components/User/FriendView/FriendView';
 import { firestore } from '../../../firebase';
 import Layout from '../../../layout/Layout';
-
+import { errorfalse, errortrue } from '../../../redux/error/action';
+import { DocumentData } from '@firebase/firestore-types';
 const Friend = () => {
-  const [subscribe, setSubscribe] = useState<any>([]);
-  const [loaded, setLoaded] = useState<boolean>();
-  const [isError, setIsError] = useState<boolean>();
+  const [subscribe, setSubscribe] = useState<DocumentData>([]);
   const router = useRouter();
   const { userid } = router.query;
-
+  const dispatch = useDispatch();
   const fetchData = async () => {
     try {
       const subscribeFromFirebase = await firestore
@@ -26,22 +26,22 @@ const Friend = () => {
           id: doc.id,
         }))
       );
-      setLoaded(true);
+      dispatch(errorfalse());
     } catch (error) {
       setSubscribe([]);
-      setIsError(true);
+      dispatch(errortrue());
     }
   };
   useEffect(() => {
     fetchData();
-    return () => setLoaded(false);
   }, [userid]);
 
   return (
     <Layout title="Friends">
       <Container>
-        {isError && <div>Error</div>}
-        {!loaded ? <Loader /> : <FriendView subscribe={subscribe} />}
+        <ErrorLoadContainer>
+          <FriendView subscribe={subscribe} />
+        </ErrorLoadContainer>
       </Container>
     </Layout>
   );

@@ -1,9 +1,11 @@
-import counterReducer from './counter/action';
 import changeReducer from './formchange/action';
+import loadReducer from './load/action';
+import errorReducer from './error/action';
 const rootReducer = {
   reducer: {
-    counter: counterReducer,
     change: changeReducer,
+    load: loadReducer,
+    error: errorReducer,
   },
 };
 export default rootReducer;

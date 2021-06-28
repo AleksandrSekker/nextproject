@@ -11,5 +11,6 @@ const useFileChange = () => {
     setFileUrl(await fileRef.getDownloadURL());
   };
   return { fileUrl, onFileChange };
+  return { fileUrl, onFileChange };
 };
 export default useFileChange;

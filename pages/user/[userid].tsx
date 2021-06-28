@@ -1,23 +1,23 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Container from '../../components/Container/Container';
-import Loader from '../../components/Loader/Loader';
-import UserView from '../../components/UserView/UserView';
+import Container from '../../components/Layout/Container/Container';
+import ErrorLoadContainer from '../../components/Layout/ErrorLoadContainer/ErrorLoadContainer';
+import UserView from '../../components/User/UserView';
 import { auth, firestore } from '../../firebase';
 import Layout from '../../layout/Layout';
+import { errortrue } from '../../redux/error/action';
 import { changevalue, selectChange } from '../../redux/formchange/action';
-
+import { loadfalse, loadtrue } from '../../redux/load/action';
+import { DocumentData } from '@firebase/firestore-types';
 const User = () => {
-  const [data, setData] = useState<any>([]);
-  const [loaded, setLoaded] = useState<boolean>();
-  const [isError, setIsError] = useState<boolean>();
+  const [data, setData] = useState<DocumentData>([]);
   const [isModal, setIsModal] = useState(false);
-  const [subscribe, setSubscribe] = useState<any>([]);
-  const [currUserSub, setcurrUserSub] = useState<any>();
+  const [subscribe, setSubscribe] = useState<DocumentData>([]);
+  const [currUserSub, setcurrUserSub] = useState<DocumentData | null>([]);
   const [isModalPost, setIsModalPost] = useState(false);
   const [isModalSubscribers, setIsModalSubscribers] = useState(false);
-  const [posts, setPosts] = useState<any>([]);
+  const [posts, setPosts] = useState<DocumentData>([]);
   const isChange = useSelector(selectChange);
   const router = useRouter();
   const { userid } = router.query;
@@ -29,7 +29,7 @@ const User = () => {
         .doc(userid as string)
         .get();
 
-      setData(dataFromFirebase.data());
+      setData(dataFromFirebase.data() as DocumentData);
       const subscribeFromFirebase = await firestore
         .collection('users')
         .doc(userid as string)
@@ -48,20 +48,26 @@ const User = () => {
         .collection('subscribers')
         .doc(auth.currentUser?.uid)
         .get();
-      setcurrUserSub(isCurrentUserSubscribed.data());
+      setcurrUserSub(isCurrentUserSubscribed.data() as DocumentData);
 
       const postUser = await firestore
         .collection('users')
         .doc(userid as string)
         .collection('posts')
         .get();
-      setPosts(postUser.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-      setLoaded(true);
+      setPosts(
+        postUser.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }))
+      );
+      dispatch(loadtrue());
     } catch (error) {
       setData([]);
       setSubscribe([]);
       setcurrUserSub(null);
-      setIsError(true);
+      dispatch(loadfalse);
+      dispatch(errortrue());
       console.log(error);
     }
   };
@@ -87,12 +93,11 @@ const User = () => {
           avatar: auth.currentUser?.photoURL,
           id: auth.currentUser?.uid,
         });
-      setLoaded(true);
+      dispatch(loadtrue());
       dispatch(changevalue());
     } catch (error) {
       setSubscribe([]);
-      setIsError(true);
-      console.log(error);
+      dispatch(errortrue());
     }
   };
 
@@ -105,30 +110,25 @@ const User = () => {
         .doc(auth.currentUser?.uid)
         .delete();
 
-      setLoaded(true);
+      dispatch(loadtrue());
       dispatch(changevalue());
     } catch (error) {
       setSubscribe([]);
-      setIsError(true);
-      console.log(error);
+      dispatch(errortrue());
     }
   };
   useEffect(() => {
     fetchData();
-    return () => setLoaded(false);
   }, [isChange, userid]);
-  console.log(data);
+
   return (
     <Layout title={`${data?.name || 'user page'} `}>
       <Container>
-        {isError && <div>Error</div>}
-        {!loaded ? (
-          <Loader />
-        ) : (
+        <ErrorLoadContainer>
           <UserView
             data={data}
             auth={auth}
-            userid={userid}
+            userid={userid as string}
             modalHandler={modalHandler}
             modalPostHandler={modalPostHandler}
             currUserSub={currUserSub}
@@ -144,7 +144,7 @@ const User = () => {
             modalSubscribersHandler={modalSubscribersHandler}
             setIsModalSubscribers={setIsModalSubscribers}
           />
-        )}
+        </ErrorLoadContainer>
       </Container>
     </Layout>
   );

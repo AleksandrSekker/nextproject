@@ -1,0 +1,36 @@
+.flex {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+.header__profile {
+  display: flex;
+  flex-wrap: wrap;
+}
+.avatar {
+  width: 20rem;
+  height: 20rem;
+  border-radius: 100%;
+}
+.paragraph {
+  font-size: 1.5rem;
+}
+.name {
+  margin-right: 2rem;
+}
+.button__friend {
+  display: flex;
+  align-items: center;
+  color: white;
+  border: none;
+  background: rgb(90, 165, 155);
+  margin-top: 1rem;
+  border-radius: 0.5rem;
+  .friend__icon {
+    font-size: 1.3rem;
+  }
+  .friend__text {
+    margin-left: 0.5rem;
+  }
+}

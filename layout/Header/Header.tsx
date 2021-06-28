@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import styles from './scss/Header.module.scss';
-import ErrorAlert from '../../components/Alert/ErrorAlert/ErrorAlert';
+import ErrorAlert from '../../components/UI/Alert/ErrorAlert/ErrorAlert';
 import { auth } from '../../firebase';
-import SignInButton from '../../components/LoginButton/SignInButton';
-import SignOutButton from '../../components/LoginButton/SignOutButton';
+import SignInButton from '../../components/UI/LoginButton/SignInButton';
+import SignOutButton from '../../components/UI/LoginButton/SignOutButton';
 import { useState } from 'react';
 
 const Header = () => {

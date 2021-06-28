@@ -1,12 +1,8 @@
 import React from 'react';
+import { Submit } from '../../interfaces';
 import styles from './scss/submit.module.scss';
-interface Props {
-  children: string;
-  color: string;
-  disabledButton?: any;
-}
 
-const SubmitButton = ({ children, color, disabledButton }: Props) => {
+const SubmitButton = ({ children, color, disabledButton }: Submit) => {
   return (
     <button
       type="submit"
