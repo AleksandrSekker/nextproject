@@ -6,13 +6,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AnimatePresence, motion } from 'framer-motion';
 import styles from './scss/ErrorAlert.module.scss';
 import React from 'react';
-import { AlertError } from '../../../../interfaces';
+import { AlertErrorView } from '../../../../interfaces';
 
 const ErrorAlertView = ({
   showAlert,
   containerVariant,
   closeAlert,
-}: AlertError) => {
+}: AlertErrorView) => {
   return (
     <AnimatePresence>
       {showAlert && (

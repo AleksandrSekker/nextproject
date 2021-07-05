@@ -13,7 +13,6 @@ const ErrorAlert = ({ showAlert, setShowAlert }: AlertError) => {
   return (
     <ErrorAlertView
       showAlert={showAlert}
-      setShowAlert={setShowAlert}
       closeAlert={closeAlert}
       containerVariant={containerVariant}
     />

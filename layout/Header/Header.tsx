@@ -42,10 +42,6 @@ const Header = () => {
             )}
           </div>
 
-          {/* <div className={styles.navigation__content}>
-            <Link href="/pomodoro">Pomodoro App</Link>
-          </div> */}
-
           <button
             type="button"
             className={`${styles.hamburger}

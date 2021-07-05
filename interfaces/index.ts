@@ -10,6 +10,9 @@ export interface FormForPost {
 export interface AlertError {
   showAlert: boolean;
   setShowAlert: (arg0: boolean) => void;
+}
+export interface AlertErrorView {
+  showAlert: boolean;
   closeAlert: () => void;
   containerVariant: {
     alertInitial: {
@@ -31,7 +34,6 @@ export interface AlertError {
     };
   };
 }
-
 export interface Submit {
   children: string;
   color: string;
