@@ -2,7 +2,6 @@ import { faUser } from '@fortawesome/free-regular-svg-icons';
 import {
   faAngleLeft,
   faAngleRight,
-  faHome,
   faUserFriends,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -43,12 +42,6 @@ const Sidebar = () => {
       <div className={styles.content}>
         {user && (
           <>
-            {/* <Link href={`/user/feed/${user.uid}`}>
-              <div className={styles.link}>
-                <FontAwesomeIcon icon={faHome} className={styles.icon} />
-                {!isActive && <h3 className={styles.text__link}>Feed</h3>}
-              </div>
-            </Link> */}
             <Link href={`/user/${user.uid}`}>
               <div className={styles.link}>
                 <FontAwesomeIcon icon={faUser} className={styles.icon} />
