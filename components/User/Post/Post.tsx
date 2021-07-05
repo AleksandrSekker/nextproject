@@ -1,4 +1,4 @@
-import { faBackspace, faComment } from '@fortawesome/free-solid-svg-icons';
+import { faBackspace } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { SyntheticEvent, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -112,12 +112,6 @@ const Post = ({ data, userid }: Props) => {
               <p>{title}</p>
               <div className={styles.like__and__comment}>
                 <Like id={id} userid={userid} />
-
-                {/* <FontAwesomeIcon
-                  icon={faComment}
-                  className={styles.comment__icon}
-                  onClick={() => commentHandler(id, showcomentar)}
-                /> */}
                 <CommentButton
                   id={id}
                   userid={userid}
