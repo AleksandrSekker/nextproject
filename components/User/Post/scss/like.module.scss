@@ -1,7 +1,13 @@
+.like__container {
+  display: flex;
+  align-items: center;
+}
 .fill__like {
   font-size: 1.5rem;
   color: red;
+  margin-right: 1rem;
 }
 .empty__like {
   font-size: 1.5rem;
+  margin-right: 1rem;
 }

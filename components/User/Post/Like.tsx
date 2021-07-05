@@ -64,7 +64,7 @@ const Like = ({ id, userid }: Props) => {
   var item = userLike.find((item: any) => item.id === user?.uid);
   console.log(item);
   return (
-    <div>
+    <div className={styles.like__container}>
       {item ? (
         <FontAwesomeIcon
           icon={faHeart}

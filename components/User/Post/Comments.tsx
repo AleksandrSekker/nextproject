@@ -1,34 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { firestore } from '../../../firebase';
+import React from 'react';
 import styles from './scss/comments.module.scss';
-import { DocumentData } from '@firebase/firestore-types';
+
 import { CommentsProps, PostProps } from '../../../interfaces';
+import useComment from '../../../hooks/useComment';
 
-const Comments = ({ id, isChange, userid }: PostProps) => {
-  const [comments, setComments] = useState<DocumentData>([]);
+const Comments = ({ id, userid }: PostProps) => {
+  const { comments } = useComment({ userid, id });
 
-  const getComments = async () => {
-    try {
-      const commentsFromFirestore = await firestore
-        .collection('users')
-        .doc(userid as string)
-        .collection('posts')
-        .doc(id)
-        .collection('comments')
-        .get();
-      setComments(
-        commentsFromFirestore.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    getComments();
-    return () => {
-      setComments([]);
-    };
-  }, [isChange]);
   console.log(comments);
   return (
     <div>

@@ -1,3 +1,4 @@
+import { faUser } from '@fortawesome/free-regular-svg-icons';
 import {
   faAngleLeft,
   faAngleRight,
@@ -7,6 +8,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { auth } from '../../firebase';
 import styles from './scss/sidebar.module.scss';
@@ -23,6 +25,8 @@ const Sidebar = () => {
       setNavFalse(true);
     }
   };
+  const [user] = useAuthState(auth);
+
   return (
     <div
       className={`${styles.navcontent__vertical} ${
@@ -37,18 +41,28 @@ const Sidebar = () => {
         )}
       </button>
       <div className={styles.content}>
-        <Link href={`/user/${auth.currentUser?.uid}`}>
-          <div className={styles.link}>
-            <FontAwesomeIcon icon={faHome} className={styles.icon} />
-            {!isActive && <h3 className={styles.text__link}>Home</h3>}
-          </div>
-        </Link>
-        <Link href={`/user/friend/${auth.currentUser?.uid}`}>
-          <div className={styles.link}>
-            <FontAwesomeIcon icon={faUserFriends} className={styles.icon} />
-            {!isActive && <h3 className={styles.text__link}>Friends</h3>}
-          </div>
-        </Link>
+        {user && (
+          <>
+            {/* <Link href={`/user/feed/${user.uid}`}>
+              <div className={styles.link}>
+                <FontAwesomeIcon icon={faHome} className={styles.icon} />
+                {!isActive && <h3 className={styles.text__link}>Feed</h3>}
+              </div>
+            </Link> */}
+            <Link href={`/user/${user.uid}`}>
+              <div className={styles.link}>
+                <FontAwesomeIcon icon={faUser} className={styles.icon} />
+                {!isActive && <h3 className={styles.text__link}>My page</h3>}
+              </div>
+            </Link>
+            <Link href={`/user/friend/${user.uid}`}>
+              <div className={styles.link}>
+                <FontAwesomeIcon icon={faUserFriends} className={styles.icon} />
+                {!isActive && <h3 className={styles.text__link}>Friends</h3>}
+              </div>
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );

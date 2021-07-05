@@ -1,25 +1,18 @@
-import Container from '../components/Layout/Container/Container';
+import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
 import Layout from '../layout/Layout';
-import Button from '../components/UI/buttons/Button';
-import Link from 'next/link';
 
-const IndexPage = () => {
-  return (
-    <Layout title="Home">
-      <Container>
-        <div>
-          <Container>
-            <Link href={`user/${auth.currentUser?.uid}`}>
-              <div>
-                <Button color="purple" children="My page" />
-              </div>
-            </Link>
-          </Container>
-        </div>
-      </Container>
-    </Layout>
-  );
+const index = () => {
+  const [user] = useAuthState(auth);
+  const router = useRouter();
+  useEffect(() => {
+    setTimeout(() => {
+      user && router.push(`/user/${user.uid}`);
+    }, 0);
+  }, [user?.uid]);
+  return <Layout></Layout>;
 };
 
-export default IndexPage;
+export default index;

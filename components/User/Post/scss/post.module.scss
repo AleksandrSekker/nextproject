@@ -38,13 +38,18 @@
 .body__container {
   margin: 0 0.5rem;
 }
-.fill__like {
-  font-size: 1.5rem;
-  color: red;
-}
-.empty__like {
-  font-size: 1.5rem;
-}
 .comment__icon {
   font-size: 1.5rem;
+}
+.like__and__comment {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.comment__icon__container {
+  display: flex;
+  align-items: center;
+  div {
+    margin-left: 1rem;
+  }
 }

@@ -13,6 +13,7 @@ import Link from 'next/link';
 import useProfileData from '../../../hooks/useProfileData';
 import { DocumentData } from '@firebase/firestore-types';
 import Like from './Like';
+import CommentButton from './CommentButton';
 
 interface Props {
   data: DocumentData;
@@ -39,6 +40,7 @@ const Post = ({ data, userid }: Props) => {
   const dispatch = useDispatch();
   const [user] = useAuthState(auth);
   const { profileData } = useProfileData({ userid });
+
   const deleteHandler = (id: string) => {
     firestore
       .collection('users')
@@ -62,6 +64,7 @@ const Post = ({ data, userid }: Props) => {
         username: profileData?.name,
         avatar: profileData?.avatar,
         timestamp: timestamp,
+        showcomentar: true,
       });
 
     setComment('');
@@ -72,7 +75,15 @@ const Post = ({ data, userid }: Props) => {
     setComment(e.target.value);
   };
 
-  const commentHandler = (id: string) => {};
+  const commentHandler = (id: string, showcomentar: boolean) => {
+    firestore
+      .collection('users')
+      .doc(userid as string)
+      .collection('posts')
+      .doc(id)
+      .update({ showcomentar: !showcomentar });
+    dispatch(changevalue());
+  };
 
   return (
     <div className={styles.post__container}>
@@ -99,14 +110,21 @@ const Post = ({ data, userid }: Props) => {
             <img src={image} alt="post image" className={styles.image} />
             <div className={styles.body__container}>
               <p>{title}</p>
-              <Like id={id} userid={userid} />
+              <div className={styles.like__and__comment}>
+                <Like id={id} userid={userid} />
 
-              <FontAwesomeIcon
-                icon={faComment}
-                className={styles.comment__icon}
-                onClick={() => commentHandler(id)}
-              />
-
+                {/* <FontAwesomeIcon
+                  icon={faComment}
+                  className={styles.comment__icon}
+                  onClick={() => commentHandler(id, showcomentar)}
+                /> */}
+                <CommentButton
+                  id={id}
+                  userid={userid}
+                  commentHandler={commentHandler}
+                  showcomentar={showcomentar}
+                />
+              </div>
               {showcomentar && (
                 <Comments id={id} isChange={isChange} userid={userid} />
               )}
